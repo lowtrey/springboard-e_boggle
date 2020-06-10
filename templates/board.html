@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/app.css" />
+    <title>Boggle</title>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Boggle!</h1>
+      <table class="board">
+        {% for row in board %}
+        <tr class="row">
+          {% for letter in row %}
+          <td class="cell"><h2>{{letter}}</h2></td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+    </div>
+  </body>
+</html>
