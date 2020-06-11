@@ -3,6 +3,7 @@ from boggle import Boggle
 
 app = Flask(__name__)
 boggle_game = Boggle()
+
 # Configure Key for Session
 app.config["SECRET_KEY"] = "oh-so-secret"
 
