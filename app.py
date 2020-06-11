@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, request, jsonify
 from boggle import Boggle
 
 app = Flask(__name__)
@@ -22,3 +22,17 @@ def show_game():
         session["board"] = board
 
     return render_template("board.html", board=board)
+
+
+@app.route("/guess")
+def check_guess():
+
+    board = session.get("board")
+
+    guess = request.args.get("guess", "Oops, something went wrong...")
+
+    message = boggle_game.check_valid_word(board, guess)
+
+    response = jsonify({"result": message})
+
+    return response
