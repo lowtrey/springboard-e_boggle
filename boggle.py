@@ -9,6 +9,21 @@ class Boggle():
     def __init__(self):
 
         self.words = self.read_dict("words.txt")
+        self.times_played = 0
+        self.high_score = 0
+
+    def update_high_score(self, new_score):
+        """Update high score"""
+
+        message = "You didn't beat the high score, try again..."
+
+        if new_score > self.high_score:
+
+            self.high_score = new_score
+
+            message = "New High Score!"
+            
+        return message
 
     def read_dict(self, dict_path):
         """Read and return all words in dictionary."""

@@ -1,25 +1,43 @@
-$(window).on("load", function () {
+$(window).on("load", () => {
   const timer = setInterval(countdown, 1000);
 
-  function countdown() {
-    // TODOS:
-    // - Change timer text to red when under 20 seconds
-    // - Slide Guess form up when time is up
-    // - slide restart button down when time is up
-    $("#seconds").text(`${parseInt($("#seconds").text()) - 1}`);
+  countdown();
 
-    if ($("#seconds").text() === "20") {
+  function countdown() {
+    $("#seconds").text(`${parseInt($("#seconds").text()) - 1}`);
+    const secondsLeft = $("#seconds").text();
+    const timesUp = secondsLeft === "0";
+    updateColor(secondsLeft);
+    if (timesUp) endGame();
+  }
+
+  function updateColor(seconds) {
+    if (seconds === "20") {
       $("#seconds").css("color", "khaki");
-    } else if ($("#seconds").text() === "10") {
+    } else if (seconds === "10") {
       $("#seconds").css("color", "lightcoral");
-    } else if ($("#seconds").text() === "0") {
-      clearInterval(timer);
-      $("#seconds").text("Time's Up!");
-      $("#guessForm").slideUp();
-      $("#restart").delay(1000).slideDown();
     }
   }
+
+  async function endGame() {
+    const message = await updateStats($("#score").text());
+    clearInterval(timer);
+    $("#seconds").text("Time's Up!");
+    $("#guessForm").slideUp();
+    $("#restart").delay(1000).slideDown();
+    $("#scoreMessage").text(message);
+  }
 });
+
+async function updateStats(score) {
+  const response = await axios.get("/update", {
+    params: {
+      score,
+    },
+  });
+
+  return response.data;
+}
 
 // Validate Guessed Word
 const validateGuess = async (guessedWord) => {
@@ -45,9 +63,7 @@ const generateMessage = (guessedWord, responseText) => {
 };
 
 const showMessage = (message) => {
-  // TODO: chain the lines below together
-  $("#message").text(message);
-  $("#message").slideDown().delay(1000).slideUp();
+  $("#message").text(message).slideDown().delay(1000).slideUp();
 };
 
 // Handle Guess Form Submission
@@ -65,6 +81,8 @@ $("#guessForm").on("submit", async function (event) {
   showMessage(message);
 
   if (wordFound) updateScore();
+
+  $("#guess").val("");
 });
 
 // Score Functionality
@@ -85,6 +103,4 @@ function updateScore() {
 }
 
 // Reset Game (not board)
-$("#restartButton").on("click", function () {
-  location.reload();
-});
+$("#restartButton").on("click", () => location.reload());

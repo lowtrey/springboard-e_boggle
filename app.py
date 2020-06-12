@@ -37,3 +37,13 @@ def check_guess():
     response = jsonify({"result": message})
 
     return response
+
+
+@app.route("/update")
+def update_stats():
+
+    new_score = int(request.args.get("score"))
+
+    message = boggle_game.update_high_score(new_score)
+
+    return message
