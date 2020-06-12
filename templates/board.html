@@ -10,8 +10,14 @@
   </head>
 
   <body>
+    <div id="timer">
+      <h1 id="seconds">10</h1>
+    </div>
     <div class="container">
       <h1>Boggle!</h1>
+      <div id="scoreBox">
+        <h3>Score: <span id="score">0</span></h3>
+      </div>
       <table class="board">
         {% for row in board %}
         <tr class="row">
@@ -26,6 +32,9 @@
         <input type="text" name="guess" id="guess" required />
         <button type="submit">Submit</button>
       </form>
+      <div id="restart">
+        <button id="restartButton">Another Turn?</button>
+      </div>
       <p id="message"></p>
     </div>
 

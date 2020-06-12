@@ -19,8 +19,24 @@ table {
   width: 50%;
 }
 
+h1 {
+  margin-bottom: 0.5em;
+}
+
 .container {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
+#scoreBox, #message, #restart {
+  display: none;
+}
+
+#timer {
+  position: absolute;
+  right: 1em;
+  top: 0;
+}
+
+#
