@@ -29,7 +29,9 @@ h1 {
   align-items: center;
 }
 
-#scoreBox, #message, #restart {
+#scoreBox,
+#message,
+#restart {
   display: none;
 }
 
@@ -38,5 +40,3 @@ h1 {
   right: 1em;
   top: 0;
 }
-
-#

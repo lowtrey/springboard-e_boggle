@@ -71,11 +71,8 @@ $("#guessForm").on("submit", async function (event) {
   event.preventDefault();
 
   const $guess = $("#guess").val();
-
   const guessResponse = await validateGuess($guess);
-
   const message = generateMessage($guess, guessResponse);
-
   const wordFound = guessResponse === "ok";
 
   showMessage(message);

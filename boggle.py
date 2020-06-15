@@ -16,13 +16,9 @@ class Boggle():
         """Update high score"""
 
         message = "You didn't beat the high score, try again..."
-
         if new_score > self.high_score:
-
             self.high_score = new_score
-
             message = "New High Score!"
-            
         return message
 
     def read_dict(self, dict_path):
