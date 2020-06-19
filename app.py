@@ -11,16 +11,21 @@ app.config["SECRET_KEY"] = "oh-so-secret"
 @app.route("/")
 def show_game():
     """Display Board & Form | Start Session"""
+    # Get board from session
     if "board" in session:
         board = session.get("board")
+        plays = session.get("plays")
     else:
+        # Create board | Save board & play count to session
         board = boggle_game.make_board()
         session["board"] = board
-    return render_template("board.html", board=board)
+        session["plays"] = 0
+    return render_template("board.html", board=board, plays=plays)
 
 
 @app.route("/guess")
-def check_guess():
+def validate_guess():
+    """Validate Submitted Guess | Return Response Message"""
     board = session.get("board")
     guess = request.args.get("guess", "Oops, something went wrong...")
     message = boggle_game.check_valid_word(board, guess)
@@ -30,6 +35,7 @@ def check_guess():
 
 @app.route("/update")
 def update_stats():
+    """Update User Stats"""
     new_score = int(request.args.get("score"))
-    message = boggle_game.update_high_score(new_score)
-    return message
+    response = jsonify(boggle_game.update_stats(new_score))
+    return response

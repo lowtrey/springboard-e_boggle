@@ -10,7 +10,7 @@ $(window).on("load", () => {
     updateColor(secondsLeft);
     if (timesUp) endGame();
   }
-
+  // TODO - parse seconds in countdown function and change conditional below
   function updateColor(seconds) {
     if (seconds === "20") {
       $("#seconds").css("color", "khaki");
@@ -20,12 +20,14 @@ $(window).on("load", () => {
   }
 
   async function endGame() {
-    const message = await updateStats($("#score").text());
+    const { message, plays } = await updateStats($("#score").text());
+
     clearInterval(timer);
     $("#seconds").text("Time's Up!");
     $("#guessForm").slideUp();
     $("#restart").delay(1000).slideDown();
     $("#scoreMessage").text(message);
+    $("#plays").text(plays);
   }
 });
 
@@ -62,24 +64,24 @@ $("#guessForm").on("submit", async function (event) {
   const response = await validateGuess($guess);
 
   flashMessage(response);
-  updateScore(response);
+  updateScore(response, $guess.length);
 
   // reset input
   $("#guess").val("");
 });
 
 // Score Functionality
-function updateScore(responseString) {
+function updateScore(responseString, points) {
   const $scoreBox = $("#scoreBox");
   const $score = $("#score");
   // initialize score to zero
   if (!$score.text()) {
     $score.text("0");
   } else if (responseString.includes("found")) {
-    // update score - animate if first point
-    $score.text(`${parseInt($score.text()) + 1}`);
-    if ($score.text() === "1") {
-      $scoreBox.slideToggle();
+    // update and show score
+    $score.text(`${parseInt($score.text()) + points}`);
+    if (parseInt($score.text()) >= 1) {
+      $scoreBox.slideDown();
     }
   }
 }

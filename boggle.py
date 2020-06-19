@@ -10,16 +10,22 @@ class Boggle():
 
         self.words_list = self.read_dict("words.txt")
         self.times_played = 0
+        self.found_words = []
         self.high_score = 0
 
-    def update_high_score(self, new_score):
-        """Update high score"""
-
+    def update_stats(self, new_score):
+        """Update high score & play count"""
+        
+        self.times_played += 1
+        self.found_words = []
         message = "You didn't beat the high score, try again..."
+
         if new_score > self.high_score:
             self.high_score = new_score
             message = "New High Score!"
-        return message
+        
+        stats = {"message": message, "plays": self.times_played}
+        return stats
 
     def read_dict(self, dict_path):
         """Read and return all words in dictionary."""
@@ -46,7 +52,10 @@ class Boggle():
         word_exists = word in self.words_list
         valid_word = self.find(board, word.upper())
 
-        if word_exists and valid_word:
+        if word in self.found_words:
+            result = f"'{word}' already submitted. Try again..."
+        elif word_exists and valid_word:
+            self.found_words.append(word)
             result = f"'{word}' found!"
         elif word_exists and not valid_word:
             result = f"'{word}' isn't on the board. Try again..."
