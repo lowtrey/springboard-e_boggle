@@ -8,7 +8,7 @@ class Boggle():
 
     def __init__(self):
 
-        self.words = self.read_dict("words.txt")
+        self.words_list = self.read_dict("words.txt")
         self.times_played = 0
         self.high_score = 0
 
@@ -43,15 +43,15 @@ class Boggle():
     def check_valid_word(self, board, word):
         """Check if a word is a valid word in the dictionary and/or the boggle board"""
 
-        word_exists = word in self.words
+        word_exists = word in self.words_list
         valid_word = self.find(board, word.upper())
 
         if word_exists and valid_word:
-            result = "ok"
+            result = f"'{word}' found!"
         elif word_exists and not valid_word:
-            result = "not-on-board"
+            result = f"'{word}' isn't on the board. Try again..."
         else:
-            result = "not-word"
+            result = f"'{word}' isn't a valid word. Try again..."
 
         return result
 

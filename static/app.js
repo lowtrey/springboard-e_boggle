@@ -50,19 +50,7 @@ const validateGuess = async (guessedWord) => {
   return response.data.result;
 };
 
-// Generate Response Message
-const generateMessage = (guessedWord, responseText) => {
-  const message =
-    responseText === "ok"
-      ? `"${guessedWord}" found!`
-      : responseText === "not-on-board"
-      ? `"${guessedWord}" isn't on the board. Try again...`
-      : `"${guessedWord}" isn't a valid word. Try again...`;
-
-  return message;
-};
-
-const showMessage = (message) => {
+const flashMessage = (message) => {
   $("#message").text(message).slideDown().delay(1000).slideUp();
 };
 
@@ -71,26 +59,23 @@ $("#guessForm").on("submit", async function (event) {
   event.preventDefault();
 
   const $guess = $("#guess").val();
-  const guessResponse = await validateGuess($guess);
-  const message = generateMessage($guess, guessResponse);
-  const wordFound = guessResponse === "ok";
+  const response = await validateGuess($guess);
 
-  showMessage(message);
+  flashMessage(response);
+  updateScore(response);
 
-  if (wordFound) updateScore();
-
+  // reset input
   $("#guess").val("");
 });
 
 // Score Functionality
-const $scoreBox = $("#scoreBox");
-const $score = $("#score");
-
-function updateScore() {
+function updateScore(responseString) {
+  const $scoreBox = $("#scoreBox");
+  const $score = $("#score");
   // initialize score to zero
   if (!$score.text()) {
     $score.text("0");
-  } else {
+  } else if (responseString.includes("found")) {
     // update score - animate if first point
     $score.text(`${parseInt($score.text()) + 1}`);
     if ($score.text() === "1") {
