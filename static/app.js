@@ -88,5 +88,5 @@ $(window).on("load", () => {
   // Add Click Handlers
   $("#guessForm").on("submit", Boggle.handleSubmit);
   $("#restartButton").on("click", () => location.reload());
-  // $("#restartButton").on("click", () => location.reload());
+  $("#resetButton").on("click", () => (window.location = "/reset"));
 });

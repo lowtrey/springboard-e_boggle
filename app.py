@@ -1,4 +1,4 @@
-from flask import Flask, render_template, session, request, jsonify
+from flask import Flask, render_template, session, request, jsonify, redirect
 from boggle import Boggle
 
 app = Flask(__name__)
@@ -14,13 +14,11 @@ def show_game():
     # Get board from session
     if "board" in session:
         board = session.get("board")
-        plays = session.get("plays")
     else:
         # Create board | Save board & play count to session
         board = boggle_game.make_board()
         session["board"] = board
-        session["plays"] = 0
-    return render_template("board.html", board=board, plays=plays)
+    return render_template("board.html", board=board)
 
 
 @app.route("/guess")
@@ -39,3 +37,10 @@ def update_stats():
     new_score = int(request.args.get("score"))
     response = jsonify(boggle_game.update_stats(new_score))
     return response
+
+
+@app.route("/reset")
+def reset_game():
+    """Clear Session | Reset Game"""
+    session.clear()
+    return redirect("/")
