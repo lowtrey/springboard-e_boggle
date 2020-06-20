@@ -1,90 +1,92 @@
-$(window).on("load", () => {
-  const timer = setInterval(countdown, 1000);
-
-  countdown();
-
-  function countdown() {
-    $("#seconds").text(`${parseInt($("#seconds").text()) - 1}`);
-    const secondsLeft = $("#seconds").text();
-    const timesUp = secondsLeft === "0";
-    updateColor(secondsLeft);
-    if (timesUp) endGame();
+class BoggleSession {
+  constructor() {
+    this.timer = setInterval(this.countdown, 1000);
+    this.seconds = 5;
   }
-  // TODO - parse seconds in countdown function and change conditional below
-  function updateColor(seconds) {
-    if (seconds === "20") {
+
+  countdown = () => {
+    // Countdown Seconds & Update Text Color
+    $("#seconds").text(this.seconds);
+    if (this.seconds === 20) {
       $("#seconds").css("color", "khaki");
-    } else if (seconds === "10") {
+    } else if (this.seconds === 10) {
       $("#seconds").css("color", "lightcoral");
+    } else if (this.seconds === 0) {
+      this.endSession();
     }
-  }
 
-  async function endGame() {
-    const { message, plays } = await updateStats($("#score").text());
+    this.seconds--;
+  };
 
-    clearInterval(timer);
+  endSession = async () => {
+    const { message, plays } = await this.updateStats($("#score").text());
+
+    clearInterval(this.timer);
     $("#seconds").text("Time's Up!");
     $("#guessForm").slideUp();
     $("#restart").delay(1000).slideDown();
     $("#scoreMessage").text(message);
     $("#plays").text(plays);
-  }
-});
+  };
 
-async function updateStats(score) {
-  const response = await axios.get("/update", {
-    params: {
-      score,
-    },
-  });
+  updateStats = async (score) => {
+    const response = await axios.get("/update", {
+      params: {
+        score,
+      },
+    });
 
-  return response.data;
-}
+    return response.data;
+  };
 
-// Validate Guessed Word
-const validateGuess = async (guessedWord) => {
-  const response = await axios.get("/guess", {
-    params: {
-      guess: guessedWord,
-    },
-  });
+  // Validate Guessed Word
+  validateGuess = async (guessedWord) => {
+    const response = await axios.get("/guess", {
+      params: {
+        guess: guessedWord,
+      },
+    });
 
-  return response.data.result;
-};
+    return response.data.result;
+  };
 
-const flashMessage = (message) => {
-  $("#message").text(message).slideDown().delay(1000).slideUp();
-};
+  handleSubmit = async (event) => {
+    event.preventDefault();
 
-// Handle Guess Form Submission
-$("#guessForm").on("submit", async function (event) {
-  event.preventDefault();
+    const response = await this.validateGuess($("#guess").val());
+    this.updateScore(response, $("#guess").val().length);
+    this.flashMessage(response);
 
-  const $guess = $("#guess").val();
-  const response = await validateGuess($guess);
+    // Reset Input Field
+    $("#guess").val("");
+  };
 
-  flashMessage(response);
-  updateScore(response, $guess.length);
+  flashMessage = (message) => {
+    $("#message").text(message).slideDown().delay(1000).slideUp();
+  };
 
-  // reset input
-  $("#guess").val("");
-});
-
-// Score Functionality
-function updateScore(responseString, points) {
-  const $scoreBox = $("#scoreBox");
-  const $score = $("#score");
-  // initialize score to zero
-  if (!$score.text()) {
-    $score.text("0");
-  } else if (responseString.includes("found")) {
-    // update and show score
-    $score.text(`${parseInt($score.text()) + points}`);
-    if (parseInt($score.text()) >= 1) {
-      $scoreBox.slideDown();
+  // Score Functionality
+  updateScore = (responseString, points) => {
+    const $score = $("#score");
+    const $scoreBox = $("#scoreBox");
+    // initialize score to zero
+    if (!$score.text()) {
+      $score.text("0");
+    } else if (responseString.includes("found")) {
+      // update and show score
+      $score.text(`${parseInt($score.text()) + points}`);
+      if (parseInt($score.text()) >= 1) {
+        $scoreBox.slideDown();
+      }
     }
-  }
+  };
 }
 
-// Reset Game (not board)
-$("#restartButton").on("click", () => location.reload());
+$(window).on("load", () => {
+  const Boggle = new BoggleSession();
+
+  // Add Click Handlers
+  $("#guessForm").on("submit", Boggle.handleSubmit);
+  $("#restartButton").on("click", () => location.reload());
+  // $("#restartButton").on("click", () => location.reload());
+});
