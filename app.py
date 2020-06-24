@@ -25,7 +25,7 @@ def show_game():
 def validate_guess():
     """Validate Submitted Guess | Return Response Message"""
     board = session.get("board")
-    guess = request.args.get("guess", "Oops, something went wrong...")
+    guess = request.args.get("guess", " ")
     message = boggle_game.check_valid_word(board, guess)
     response = jsonify({"result": message})
     return response
