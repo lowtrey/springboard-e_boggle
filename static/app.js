@@ -39,7 +39,6 @@ class BoggleSession {
     return response.data;
   };
 
-  // Validate Guessed Word
   validateGuess = async (guessedWord) => {
     const response = await axios.get("/guess", {
       params: {
@@ -54,9 +53,9 @@ class BoggleSession {
     event.preventDefault();
 
     const response = await this.validateGuess($("#guess").val());
+
     this.updateScore(response, $("#guess").val().length);
     this.flashMessage(response);
-
     // Reset Input Field
     $("#guess").val("");
   };
@@ -65,15 +64,14 @@ class BoggleSession {
     $("#message").text(message).slideDown().delay(1000).slideUp();
   };
 
-  // Score Functionality
   updateScore = (responseString, points) => {
     const $score = $("#score");
     const $scoreBox = $("#scoreBox");
-    // initialize score to zero
+    // Initialize Score To Zero
     if (!$score.text()) {
       $score.text("0");
     } else if (responseString.includes("found")) {
-      // update and show score
+      // Update & Show Score
       $score.text(`${parseInt($score.text()) + points}`);
       if (parseInt($score.text()) >= 1) {
         $scoreBox.slideDown();
@@ -84,7 +82,6 @@ class BoggleSession {
 
 $(window).on("load", () => {
   const Boggle = new BoggleSession();
-
   // Add Click Handlers
   $("#guessForm").on("submit", Boggle.handleSubmit);
   $("#restartButton").on("click", () => location.reload());
