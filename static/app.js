@@ -1,7 +1,7 @@
 class BoggleSession {
   constructor() {
     this.timer = setInterval(this.countdown, 1000);
-    this.seconds = 15;
+    this.seconds = 60;
   }
 
   countdown = () => {

@@ -33,24 +33,27 @@ class Boggle():
         dict_file = open(dict_path)
         words = [w.strip() for w in dict_file]
         dict_file.close()
+
         return words
 
     def check_valid_word(self, word):
         """Check if a word is a valid word in the dictionary and/or the boggle board"""
 
+        response = ""
         word_exists = word in self.words_list
         valid_word = self.board.find(word.upper())
 
         if word in self.found_words:
-            result = f"'{word}' already submitted. Try again..."
+            response = "already submitted. Try again..."
         elif word_exists and valid_word:
             self.found_words.append(word)
-            result = f"'{word}' found!"
+            response = "found!"
         elif word_exists and not valid_word:
-            result = f"'{word}' isn't on the board. Try again..."
+            response = "isn't on the board. Try again..."
         else:
-            result = f"'{word}' isn't a valid word. Try again..."
-
+            response = "isn't a valid word. Try again..."
+        result = f"'{word}' {response}"
+    
         return result
 
 
@@ -61,10 +64,13 @@ class Board():
 
     def make_board(self):
         """Make and return a random boggle board."""
+
         board = []
+
         for y in range(5):
             row = [choice(string.ascii_uppercase) for i in range(5)]
             board.append(row)
+
         return board
 
     def find_from(self, word, y, x, seen):
@@ -163,6 +169,5 @@ class Board():
                     return True
 
         # We've tried every path from every starting square w/o luck.
-        # Sad panda.
 
         return False
