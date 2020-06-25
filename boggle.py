@@ -3,12 +3,12 @@
 from random import choice
 import string
 
-
 class Boggle():
 
     def __init__(self):
 
         self.words_list = self.read_dict("words.txt")
+        self.board = Board()
         self.times_played = 0
         self.found_words = []
         self.high_score = 0
@@ -35,22 +35,11 @@ class Boggle():
         dict_file.close()
         return words
 
-    def make_board(self):
-        """Make and return a random boggle board."""
-
-        board = []
-
-        for y in range(5):
-            row = [choice(string.ascii_uppercase) for i in range(5)]
-            board.append(row)
-
-        return board
-
-    def check_valid_word(self, board, word):
+    def check_valid_word(self, word):
         """Check if a word is a valid word in the dictionary and/or the boggle board"""
 
         word_exists = word in self.words_list
-        valid_word = self.find(board, word.upper())
+        valid_word = self.board.find(word.upper())
 
         if word in self.found_words:
             result = f"'{word}' already submitted. Try again..."
@@ -64,7 +53,21 @@ class Boggle():
 
         return result
 
-    def find_from(self, board, word, y, x, seen):
+
+class Board():
+
+    def __init__(self):
+        self.board = self.make_board()
+
+    def make_board(self):
+        """Make and return a random boggle board."""
+        board = []
+        for y in range(5):
+            row = [choice(string.ascii_uppercase) for i in range(5)]
+            board.append(row)
+        return board
+
+    def find_from(self, word, y, x, seen):
         """Can we find a word on board, starting at x, y?"""
 
         if x > 4 or y > 4:
@@ -75,7 +78,7 @@ class Boggle():
 
         # Base case: this isn't the letter we're looking for.
 
-        if board[y][x] != word[0]:
+        if self.board[y][x] != word[0]:
             return False
 
         # Base case: we've used this letter before in this current path
@@ -113,42 +116,42 @@ class Boggle():
         # adding diagonals
 
         if y > 0:
-            if self.find_from(board, word[1:], y - 1, x, seen):
+            if self.find_from(word[1:], y - 1, x, seen):
                 return True
 
         if y < 4:
-            if self.find_from(board, word[1:], y + 1, x, seen):
+            if self.find_from(word[1:], y + 1, x, seen):
                 return True
 
         if x > 0:
-            if self.find_from(board, word[1:], y, x - 1, seen):
+            if self.find_from(word[1:], y, x - 1, seen):
                 return True
 
         if x < 4:
-            if self.find_from(board, word[1:], y, x + 1, seen):
+            if self.find_from(word[1:], y, x + 1, seen):
                 return True
 
         # diagonals
         if y > 0 and x > 0:
-            if self.find_from(board, word[1:], y - 1, x - 1, seen):
+            if self.find_from(word[1:], y - 1, x - 1, seen):
                 return True
 
         if y < 4 and x < 4:
-            if self.find_from(board, word[1:], y + 1, x + 1, seen):
+            if self.find_from(word[1:], y + 1, x + 1, seen):
                 return True
 
         if x > 0 and y < 4:
-            if self.find_from(board, word[1:], y + 1, x - 1, seen):
+            if self.find_from(word[1:], y + 1, x - 1, seen):
                 return True
 
         if x < 4 and y > 0:
-            if self.find_from(board, word[1:], y - 1, x + 1, seen):
+            if self.find_from(word[1:], y - 1, x + 1, seen):
                 return True
         # Couldn't find the next letter, so this path is dead
 
         return False
 
-    def find(self, board, word):
+    def find(self, word):
         """Can word be found in board?"""
 
         # Find starting letter --- try every spot on board and,
@@ -156,7 +159,7 @@ class Boggle():
 
         for y in range(0, 5):
             for x in range(0, 5):
-                if self.find_from(board, word, y, x, seen=set()):
+                if self.find_from(word, y, x, seen=set()):
                     return True
 
         # We've tried every path from every starting square w/o luck.
